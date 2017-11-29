@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import './App.css';
 import Header from './components/header'
-import { Input, Button, SubTitle } from 'reactbulma'
+import { Input, Button, SubTitle, Title } from 'reactbulma'
 
 
 class App extends Component {
   
   state = {
-    tasks: ['Write some code.', 'Go for a run.'],
+    tasks: [
+      { todo: 'Go for a run', time: '29/11/2017, 13:26:50', complete: true },
+      { todo: 'Do some coding', time: '29/11/2017, 13:27:50', complete: false }
+    ],
     searchPhrase: ''
   }
 
@@ -17,10 +20,17 @@ class App extends Component {
 
   handleSubmitQuery = (event) => {
     event.preventDefault();
-    this.setState({
-      searchPhrase: '',
-      tasks: [this.state.searchPhrase, ...this.state.tasks]
-    });
+    const existingItem = this.state.tasks.find(task => task.todo === this.state.searchPhrase);
+    if (!existingItem) {
+      this.setState({
+        searchPhrase: '',
+        tasks: [{ todo: this.state.searchPhrase, time: new Date().toLocaleString() }, ...this.state.tasks]
+      });
+    } else {
+      this.setState({
+        searchPhrase: ''
+      })
+    }
   }
 
   render() {
@@ -42,12 +52,20 @@ class App extends Component {
         </form>
         {
           tasks
-            .filter(task => task.includes(searchPhrase))
-            .map((task) => <SubTitle>{task}</SubTitle>)
+            .filter(task => task.todo.includes(searchPhrase))
+            .map((task) => <ListItem todo={task.todo} time={task.time} complete={task.complete} /> )
         }
       </div>
     );
   }
 }
+
+const ListItem = ({ todo, time, complete }) => (
+  <div>
+    <Title is="3">{todo}</Title>
+    <SubTitle is="6">{time}</SubTitle>
+    { complete && '💀' }
+  </div>
+)
 
 export default App;
