@@ -1,0 +1,20 @@
+.App {
+  text-align: center;
+}
+
+.App progress {
+  border-radius: 0px !important;
+}
+
+.input {
+  text-align: center;
+}
+
+form {
+  margin: 20px 0;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
