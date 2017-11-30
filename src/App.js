@@ -22,10 +22,22 @@ class App extends Component {
     event.preventDefault();
     const existingItem = this.state.tasks.find(task => task.todo === this.state.searchPhrase);
     if (!existingItem) {
-      this.setState({
-        searchPhrase: '',
-        tasks: [{ id: genId(), todo: this.state.searchPhrase, time: new Date().toLocaleString() }, ...this.state.tasks]
-      });
+      axios.post('/api/tasks', {
+          id: genId(),
+          todo: this.state.searchPhrase,
+          time: new Date(),
+          complete: false
+        })
+        .then((response) => {
+          console.log(response);
+          this.setState({
+            searchPhrase: '',
+            tasks: [response.data, ...this.state.tasks]
+          });
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     } else {
       this.setState({
         searchPhrase: ''
@@ -87,7 +99,7 @@ class App extends Component {
 const ListItem = ({ todo, time, complete, toggleComplete, id }) => (
   <Notification onClick={ () => toggleComplete(id) }>
     { complete ? <Title is="3" className="completed">{todo}💀</Title> : <Title is="3">{todo}</Title> }
-    <SubTitle is="6">{time}</SubTitle>
+    <SubTitle is="6">{time.toLocaleString()}</SubTitle>
   </Notification> 
 )
 
