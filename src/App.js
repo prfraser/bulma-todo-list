@@ -4,9 +4,6 @@ import Header from './components/header';
 import { Input, Button, SubTitle, Title, Notification } from 'reactbulma';
 import axios from 'axios';
 
-let currentId = 5;
-const genId = () => ++currentId
-
 class App extends Component {
   
   state = {
@@ -23,7 +20,6 @@ class App extends Component {
     const existingItem = this.state.tasks.find(task => task.todo === this.state.searchPhrase);
     if (!existingItem) {
       axios.post('/api/tasks', {
-          id: genId(),
           todo: this.state.searchPhrase,
           time: new Date(),
           complete: false
@@ -32,7 +28,7 @@ class App extends Component {
           console.log(response);
           this.setState({
             searchPhrase: '',
-            tasks: [response.data, ...this.state.tasks]
+            tasks: [...this.state.tasks, response.data]
           });
         })
         .catch(function (error) {
@@ -45,8 +41,8 @@ class App extends Component {
     }
   }
 
-  toggleComplete = (id) => {
-    const foundTodoIndex = this.state.tasks.findIndex(task => task.id === id)
+  toggleComplete = (_id) => {
+    const foundTodoIndex = this.state.tasks.findIndex(task => task._id === _id)
     this.setState(prevState => {
       const tasks = prevState.tasks
       tasks[foundTodoIndex].complete = !tasks[foundTodoIndex].complete
@@ -76,7 +72,7 @@ class App extends Component {
         {
           tasks
             .filter(task => task.todo.includes(searchPhrase))
-            .map((task) => <ListItem key={task.id} {...task} toggleComplete={this.toggleComplete} /> )
+            .map((task) => <ListItem key={task._id} {...task} toggleComplete={this.toggleComplete} /> )
         }
       </div>
     );
@@ -96,8 +92,8 @@ class App extends Component {
     }
 }
 
-const ListItem = ({ todo, time, complete, toggleComplete, id }) => (
-  <Notification onClick={ () => toggleComplete(id) }>
+const ListItem = ({ todo, time, complete, toggleComplete, _id }) => (
+  <Notification onClick={ () => toggleComplete(_id) }>
     { complete ? <Title is="3" className="completed">{todo}💀</Title> : <Title is="3">{todo}</Title> }
     <SubTitle is="6">{time.toLocaleString()}</SubTitle>
   </Notification> 
