@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
-import Header from './components/header'
-import { Input, Button, SubTitle, Title, Notification } from 'reactbulma'
+import Header from './components/header';
+import { Input, Button, SubTitle, Title, Notification } from 'reactbulma';
+import axios from 'axios';
 
 let currentId = 5;
 const genId = () => ++currentId
@@ -9,10 +10,7 @@ const genId = () => ++currentId
 class App extends Component {
   
   state = {
-    tasks: [
-      { id: 1, todo: 'Go for a run', time: '29/11/2017, 13:26:50', complete: true },
-      { id: 2, todo: 'Do some coding', time: '29/11/2017, 13:27:50', complete: false }
-    ],
+    tasks: [],
     searchPhrase: ''
   }
 
@@ -55,7 +53,7 @@ class App extends Component {
           totalComplete={tasks.filter(task => task.complete).length}/>
         <hr/>
         <form onSubmit={this.handleSubmitQuery}>
-          <Input large 
+          <Input autoFocus large 
             placeholder="Search / Add a todo!" 
             value={searchPhrase} 
             onChange={this.handleChangeQuery}/>
@@ -71,6 +69,19 @@ class App extends Component {
       </div>
     );
   }
+
+  componentDidMount(){
+    axios.get('api/tasks')
+      .then((response) => {
+        console.log(response.data);
+        this.setState({
+          tasks: response.data
+        })
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    }
 }
 
 const ListItem = ({ todo, time, complete, toggleComplete, id }) => (
